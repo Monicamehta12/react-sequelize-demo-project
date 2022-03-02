@@ -1,0 +1,57 @@
+.App {
+  height: 100vh;
+  overflow: hidden;
+  background-color: rgb(7, 5, 83);
+}
+
+.sidebar {
+  background-color: rgb(7, 5, 83);
+  min-width: 300px;
+  max-width: 300px;
+}
+
+.dropdown-menu {
+  margin-right: 20px;
+}
+
+.info-icon {
+  height: 50px;
+  width: 50px;
+  /* border: 1px solid black; */
+}
+
+.bg-card {
+  background-color: #27293d;
+}
+
+.bg-primary-icon {
+  background-color: #ff7e7d;
+}
+
+.bg-secondary-icon {
+  background-color: #d350d9;
+}
+
+.bg-info-icon {
+  background-color: #00b6e1;
+}
+
+.bg-danger-icon {
+  background-color: #f0322d;
+}
+
+.card-container{
+  max-width: 300px;
+}
+
+.badge-dot i {
+  height: 6px;
+  width: 6px;
+  border-radius: 50%;
+  margin-right: 3px;
+}
+
+.border-dashed{
+  border: 2px solid #0d6efd;
+  border-style: dashed;
+}
