@@ -153,7 +153,7 @@ const Addproject = () => {
                     <select className="form-select" name='projectManager' onChange={onInputChange} required>
                         <option>Select Project Manager</option>
                         {mentorName.map((data, index) => (
-                            <option key={index} value={data.id}>{data.name}</option>
+                            <option key={index} value={data.id}>{data.firstName}</option>
                         ))}
                     </select>
                 </div>
@@ -192,7 +192,7 @@ const Addproject = () => {
                         name='members'
                         closeOnSelect={false}
                         options={employees}
-                        displayValue= "name"
+                        displayValue= "firstName"
                         value={employees.map(data => data.value)}
                         placeholder='Select Member'
                         onChange={onInputChange}

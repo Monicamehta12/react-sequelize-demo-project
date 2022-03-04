@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import moment from 'moment'
 import { useSelector, useDispatch } from 'react-redux';
 import { Link, useParams } from 'react-router-dom'
 import instance from '../../../axios'
@@ -13,28 +12,24 @@ const initialState = {
     status: '',
     comment: '',
     reply: '',
-    qa: '',
-    codeQuality: '',
-    approvedByClient: '',
+    qa: false,
+    codeQuality: false,
+    approvedByClient: false,
     developerName: '',
 }
 
-const Viewproject = (props) => {
-    const dispatch = useDispatch();
+const Viewproject = () => {
     const [projectData, setProjectData] = useState({});
     const [filter, setFilter] = useState("Filter By Status");
-    const [addEdit, setAddEdit] = useState("Submit")
     const [editMode, setEditMode] = useState(false)
     const [DetailPage, setDetailPage] = useState(true);
     const [project, setProject] = useState([])
     const { id } = useParams();
     const [taskID, setTaskId] = useState();
-    const [checkbox, setcheckbox] = useState("false")
     const [taskDetail, setTaskDetail] = useState([])
     const [search, setSearch] = useState("")
     const [projectManager, setProjectManager] = useState("")
     const [employeeName, setEmployeeName] = useState("")
-    const [selectedStatus, setSelectedStatus] = useState("")
     const token = useSelector((state) => state.token)
     console.log("token", token)
     const users = useSelector((state) => state.users)
@@ -47,24 +42,12 @@ const Viewproject = (props) => {
 
     const { date, estimatedDuration, finalTime, status, comment, reply, qa, codeQuality, approvedByClient, developerName } = taskData
 
-    const onInputChange = (event) => {
-        const { name, value } = event.target;
-        setTaskData({ ...taskData, [name]: value });
-        // setSelectedStatus({ selectedStatus : event.target.value })
-    };
-
-    const onValueChange = (event) => {
-        setSelectedStatus({ selectedStatus : event.target.value })
-    }
-
-    const onhandlecheckbox = (e) => {
+    const handleChangeAll = (e) => {
         const name = e.target.name;
-        // const value =
-        //      e.target.checked ? e.target.value = "true" : e.target.value = "false";
-        //     setcheckbox({ [name]: value }, () => {});
-        const value = e.target.checked ? "true" : "false";
-        setcheckbox({ ...checkbox, [name]: value });
-    }
+        const value =
+            e.target.type === "checkbox" ? e.target.checked : e.target.value;
+        setTaskData({ ...taskData, [name]: value });
+    };
 
     const taskSubmitHandler = async () => {
         const taskdata = {
@@ -74,9 +57,9 @@ const Viewproject = (props) => {
             status: taskData.status,
             comment: taskData.comment,
             reply: taskData.reply,
-            qa: checkbox.qa,
-            codeQuality: checkbox.codeQuality,
-            approvedByClient: checkbox.approvedByClient,
+            qa: taskData.qa,
+            codeQuality: taskData.codeQuality,
+            approvedByClient: taskData.approvedByClient,
             developerName: taskData.developerName,
             project_id: id
         }
@@ -123,7 +106,7 @@ const Viewproject = (props) => {
                 errorToaster(errorMessage);
             });
         if (response) {
-            console.log("emplyeeprojcet", response.data)
+            console.log("projcet", response.data)
             setProject(response.data)
             setFilter("Filter By Status")
         }
@@ -152,16 +135,13 @@ const Viewproject = (props) => {
     }
 
     //converting user ids to name 
-    const projectManagerName = users.filter(data => projectManager === data.id).map(data => data.name)
-    console.log(projectManagerName)
+    const projectManagerName = users.filter(data => projectManager === data.id).map(data => data.firstName)
+    console.log("projectManagerName", projectManagerName)
 
-    console.log(employeeName)
-    
-    const teamMembers = users.filter(data => employeeName.includes(data.id)).map(data => data.name).toString()
-   
-    console.log(teamMembers)
+    console.log("employeeName",employeeName)
 
-    // console.log(teamMembers)
+    const teamMembers = users.filter(data => employeeName.includes(data.id)).map(data => data.firstName).toString()
+    console.log("teamMembers",teamMembers)
 
 
     //fetching task details
@@ -184,7 +164,7 @@ const Viewproject = (props) => {
         }
     }
 
-    
+
 
     const getTaskDetailById = async (taskId) => {
         const response = await instance
@@ -200,7 +180,7 @@ const Viewproject = (props) => {
         if (response) {
             console.log("task--", response.data.data)
             const singleTask = response.data.data
-            setTaskData({ ...singleTask});
+            setTaskData({ ...singleTask });
             setTaskId(taskId)
             setEditMode(true);
         }
@@ -208,7 +188,7 @@ const Viewproject = (props) => {
 
     console.log("taskData", taskData)
 
-//handling delete
+    //handling delete
     const handleDelete = async (taskId) => {
         const response = await instance
             .delete(requests.fetchDeleteTask + "/" + taskId, {
@@ -310,9 +290,9 @@ const Viewproject = (props) => {
         <div className='main-content h-100 bg-light p-3 pb-5 overflow-auto'>
             <div className='d-flex align-items-center justify-content-between border-bottom py-1'>
                 <h4 className='text-dark'>Project Dashboard</h4>
-                {/* <Link to='/mentor/Viewproject'>
+                <Link to='/user/Viewproject'>
                     <button className='btn bg-primary-icon text-light'>Back</button>
-                </Link> */}
+                </Link>
             </div>
 
             {DetailPage ? (
@@ -326,7 +306,7 @@ const Viewproject = (props) => {
                                         value={data}
                                         key={index}>{data}</option>
                                 ))}
-                               
+
                             </select>
                             {filter !== "Filter By Status" ? (
                                 <button onClick={() => getProjects()} className='btn btn-primary ms-2'>
@@ -378,7 +358,7 @@ const Viewproject = (props) => {
                                                 </small>
                                             </div>
                                             <div>
-                                                <p className="card-text fs-6 mb-0">Mentor Name: {users.filter(item => data.projectManager === item.id).map(item => item.name)}</p>
+                                                <p className="card-text fs-6 mb-0">Mentor Name: {users.filter(item => data.projectManager === item.id).map(item => item.firstName)}</p>
                                                 <p className="card-text fs-6 mb-0">Start Date: {data.startDate}</p>
                                                 <p className="card-text fs-6 mb-0">End Date: {data.endDate}</p>
                                                 <div className='text-center mt-3'>
@@ -416,7 +396,7 @@ const Viewproject = (props) => {
                                                         className="form-control"
                                                         id="date"
                                                         value={date || ""}
-                                                        onChange={onInputChange}
+                                                        onChange={handleChangeAll}
                                                         required />
                                                 </div>
                                                 <div className="mb-3 d-flex align-items-center">
@@ -427,7 +407,7 @@ const Viewproject = (props) => {
                                                         id='estimatedDuration'
                                                         value={estimatedDuration || ""}
                                                         placeholder='Estimated Duration'
-                                                        onChange={onInputChange}
+                                                        onChange={handleChangeAll}
                                                         required />
                                                 </div>
                                                 <div className="mb-3 d-flex align-items-center">
@@ -438,50 +418,106 @@ const Viewproject = (props) => {
                                                         id='finalTime'
                                                         placeholder='Final Time'
                                                         value={finalTime || ""}
-                                                        onChange={onInputChange}
+                                                        onChange={handleChangeAll}
                                                         required />
                                                 </div>
                                                 <div className='d-flex justify-content-between mb-3'>
                                                     <div className="form-check ">
-                                                        <input className="form-check-input" 
-                                                        type="radio" 
-                                                        name="status" 
-                                                        id="flexRadioDefault1" 
-                                                        value= "Complete" 
-                                                        onChange={onInputChange} />
+                                                        {status === "Complete" ? (
+                                                            <input
+                                                                className="form-check-input"
+                                                                checked
+                                                                type="radio"
+                                                                name="status"
+                                                                value="Complete"
+                                                                id="flexRadioDefault1"
+                                                                onChange={handleChangeAll}
+                                                            />
+                                                        ) : (
+                                                            <input
+                                                                className="form-check-input"
+                                                                type="radio"
+                                                                name="status"
+                                                                value="Complete"
+                                                                id="flexRadioDefault1"
+                                                                onChange={handleChangeAll}
+                                                            />
+                                                        )}
                                                         <label className="form-check-label" htmlFor="flexRadioDefault1">
                                                             Complete
                                                         </label>
                                                     </div>
                                                     <div className="form-check">
-                                                        <input className="form-check-input" 
-                                                        type="radio" 
-                                                        name="status" 
-                                                        id="flexRadioDefault2" 
-                                                        value= "InComplete"
-                                                        onChange={onInputChange} />
+                                                            {status === "InComplete" ? (
+                                                            <input
+                                                                className="form-check-input"
+                                                                checked
+                                                                type="radio"
+                                                                name="status"
+                                                                value="InComplete"
+                                                                id="flexRadioDefault2"
+                                                                onChange={handleChangeAll}
+                                                            />
+                                                        ) : (
+                                                            <input
+                                                                className="form-check-input"
+                                                                type="radio"
+                                                                name="status"
+                                                                value="InComplete"
+                                                                id="flexRadioDefault2"
+                                                                onChange={handleChangeAll}
+                                                            />
+                                                        )}
                                                         <label className="form-check-label" htmlFor="flexRadioDefault2">
                                                             InComplete
                                                         </label>
                                                     </div>
                                                     <div className="form-check">
-                                                        <input className="form-check-input" 
-                                                        type="radio" 
-                                                        name="status" 
-                                                        id="flexRadioDefault3" 
-                                                        value= "On-Going"  
-                                                        onChange={onInputChange} />
+                                                             {status === "On-Going" ? (
+                                                            <input
+                                                                className="form-check-input"
+                                                                checked
+                                                                type="radio"
+                                                                name="status"
+                                                                value="On-Going"
+                                                                id="flexRadioDefault3"
+                                                                onChange={handleChangeAll}
+                                                            />
+                                                        ) : (
+                                                            <input
+                                                                className="form-check-input"
+                                                                type="radio"
+                                                                name="status"
+                                                                value="On-Going"
+                                                                id="flexRadioDefault3"
+                                                                onChange={handleChangeAll}
+                                                            />
+                                                        )}
                                                         <label className="form-check-label" htmlFor="flexRadioDefault3">
                                                             On-Going
                                                         </label>
                                                     </div>
                                                     <div className="form-check ">
-                                                        <input className="form-check-input" 
-                                                        type="radio" 
-                                                        name="status" 
-                                                        id="flexRadioDefault4" 
-                                                        value= "On-Hold" 
-                                                        onChange={onInputChange} />
+                                                             {status === "On-Hold" ? (
+                                                            <input
+                                                                className="form-check-input"
+                                                                checked
+                                                                type="radio"
+                                                                name="status"
+                                                                value="On-Hold"
+                                                                id="flexRadioDefault4"
+                                                                onChange={handleChangeAll}
+                                                            />
+                                                        ) : (
+                                                            <input
+                                                                className="form-check-input"
+                                                                type="radio"
+                                                                name="status"
+                                                                value="On-Hold"
+                                                                id="flexRadioDefault4"
+                                                                onChange={handleChangeAll}
+                                                            />
+                                                        )}
                                                         <label className="form-check-label" htmlFor="flexRadioDefault4">
                                                             On-Hold
                                                         </label>
@@ -495,7 +531,7 @@ const Viewproject = (props) => {
                                                         id="comment"
                                                         placeholder='Comment'
                                                         value={comment || ""}
-                                                        onChange={onInputChange}
+                                                        onChange={handleChangeAll}
                                                         required />
                                                 </div>
                                                 <div className="mb-3 d-flex align-items-center">
@@ -506,35 +542,86 @@ const Viewproject = (props) => {
                                                         id="reply"
                                                         placeholder='Reply'
                                                         value={reply || ""}
-                                                        onChange={onInputChange}
+                                                        onChange={handleChangeAll}
                                                         required />
                                                 </div>
                                                 <div className="mb-3 d-flex align-items-center">
-                                                    <input className="form-check-input" type="checkbox" name='qa' onChange={onhandlecheckbox} id="qa" />
-                                                    <label className="form-check-label" htmlFor="qa">
+                                                    {qa === true ? (
+                                                        <input
+                                                            className="form-check-input"
+                                                            checked
+                                                            type="checkbox"
+                                                            name='qa'
+                                                            id="qa"
+                                                            onChange={handleChangeAll}
+                                                        />
+                                                    ) : (
+                                                        <input
+                                                            className="form-check-input"
+                                                            type="checkbox"
+                                                            name='qa'
+                                                            id="qa"
+                                                            onChange={handleChangeAll}
+                                                        />
+                                                    )}
+                                                    <label className="form-check-label ms-2" htmlFor="qa">
                                                         QA
                                                     </label>
                                                 </div>
                                                 <div className="mb-3 d-flex align-items-center">
-                                                    <input className="form-check-input" type="checkbox" name='codeQuality' onChange={onhandlecheckbox} id="codeQuality" />
-                                                    <label className="form-check-label" htmlFor="codeQuality">
+                                                    {codeQuality === true ? (
+                                                        <input
+                                                            className="form-check-input"
+                                                            checked
+                                                            type="checkbox"
+                                                            name='codeQuality'
+                                                            id="codeQuality"
+                                                            onChange={handleChangeAll}
+                                                        />
+                                                    ) : (
+                                                        <input
+                                                            className="form-check-input"
+                                                            type="checkbox"
+                                                            name='codeQuality'
+                                                            id="codeQuality"
+                                                            onChange={handleChangeAll}
+                                                        />
+                                                    )}
+                                                    <label className="form-check-label ms-2" htmlFor="codeQuality">
                                                         Code Quality
                                                     </label>
                                                 </div>
                                                 <div className="mb-3 d-flex align-items-center">
-                                                    <input className="form-check-input" type="checkbox" name='approvedByClient' onChange={onhandlecheckbox} id="approvedByClient" />
-                                                    <label className="form-check-label" htmlFor="approvedByClient">
+                                                    {approvedByClient === true ? (
+                                                        <input
+                                                            className="form-check-input"
+                                                            checked
+                                                            type="checkbox"
+                                                            name='approvedByClient'
+                                                            id="approvedByClient"
+                                                            onChange={handleChangeAll}
+                                                        />
+                                                    ) : (
+                                                        <input
+                                                            className="form-check-input"
+                                                            type="checkbox"
+                                                            name='approvedByClient'
+                                                            id="approvedByClient"
+                                                            onChange={handleChangeAll}
+                                                        />
+                                                    )}
+                                                    <label className="form-check-label ms-2" htmlFor="approvedByClient">
                                                         Approved by Client
                                                     </label>
                                                 </div>
                                                 <div className="mb-3 d-flex align-items-center">
                                                     <label htmlFor="developerName" className="form-label"></label>
-                                                    <select className="form-select" name="developerName" id="developerName"  value={developerName || ""} onChange={onInputChange}>
+                                                    <select className="form-select" name="developerName" id="developerName" value={developerName || ""} onChange={handleChangeAll}>
                                                         <option>Select Developer</option>
                                                         {dName.map((data, index) => (
                                                             <option
                                                                 value={data.id}
-                                                                key={index}>{data.name}</option>
+                                                                key={index}>{data.firstName}</option>
                                                         ))}
                                                     </select>
                                                 </div>
@@ -608,7 +695,7 @@ const Viewproject = (props) => {
                                             <td>{item.qa.toString()}</td>
                                             <td>{item.codeQuality.toString()}</td>
                                             <td>{item.approvedByClient.toString()}</td>
-                                            <td>{users.filter(data => item.developerName === data.id).map(data => data.name)}</td>
+                                            <td>{users.filter(data => item.developerName === data.id).map(data => data.firstName)}</td>
                                             <td className='d-flex'>
                                                 <button data-bs-toggle="modal" data-bs-target="#exampleModal" onClick={() => getTaskDetailById(item.id)} className='btn btn-link'><i className="uil uil-edit-alt"></i></button>
                                                 <button onClick={() => handleDelete(item.id)} className='btn btn-link'><i className="uil uil-trash-alt"></i></button>
