@@ -13,7 +13,7 @@ const addTask = async (req, res, next) => {
             ...obj
         });
     } catch (e) {
-        return next(new APIError(`${e.message}`, httpStatus.BAD_REQUEST, true));
+        return next(new APIError(e.message, httpStatus.BAD_REQUEST, true));
     }
 }
 
@@ -22,7 +22,7 @@ const getAllTasks = async (req, res) => {
         const taskDetail = await TaskDetail.findAll({});
         res.status(200).send(taskDetail)
     } catch (e) {
-        return next(new APIError(`${e.message}`, httpStatus.BAD_REQUEST, true));
+        return next(new APIError(e.message, httpStatus.BAD_REQUEST, true));
     }
 
 }
@@ -40,7 +40,7 @@ const getAllTaskbyProject = async (req, res) => {
         });
         res.status(200).send(taskDetail)
     } catch (e) {
-        return next(new APIError(`${e.message}`, httpStatus.BAD_REQUEST, true));
+        return next(new APIError(e.message, httpStatus.BAD_REQUEST, true));
     }
 
 }
@@ -56,7 +56,7 @@ const updateTask = async (req, res, next) => {
             ...obj
         });
     } catch (e) {
-        return next(new APIError(`${e.message}`, httpStatus.BAD_REQUEST, true));
+        return next(new APIError(e.message, httpStatus.BAD_REQUEST, true));
     }
 }
 
@@ -68,7 +68,7 @@ const deleteTask = async (req, res, next) => {
         const obj = resPattern.successPattern(httpStatus.OK, resTask, 'success');
         return res.status(obj.code).json(obj.data);
     } catch (e) {
-        return next(new APIError(`${e.message}`, httpStatus.BAD_REQUEST, true));
+        return next(new APIError(e.message, httpStatus.BAD_REQUEST, true));
     }
 }
 
@@ -81,7 +81,7 @@ const getTaskById = async (req, res, next) => {
             ...obj
         });
     } catch (e) {
-        return next(new APIError(`${e.message}`, httpStatus.BAD_REQUEST, true));
+        return next(new APIError(e.message, httpStatus.BAD_REQUEST, true));
     }
 }
 
