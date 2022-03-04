@@ -24,7 +24,8 @@ const createProject = async (req, res, next) => {
             });
         }
         else {
-            res.status(403).json("You are not allowed")
+            const message = "You are not allowed"
+            return next(new APIError(message, httpStatus.FORBIDDEN, true));
         }
     } catch (e) {
         return next(new APIError(e.message, httpStatus.BAD_REQUEST, true));
@@ -68,7 +69,7 @@ const getProjectById = async (req, res, next) => {
         console.log('project', project)
         res.status(200).send(project)
     } catch (error) {
-        return next(new APIError(`${e.message}`, httpStatus.BAD_REQUEST, true));
+        return next(new APIError(e.message, httpStatus.BAD_REQUEST, true));
     }
 
 }
@@ -105,7 +106,7 @@ const searchByName = async (req, res, next) => {
         console.log("project", project)
         res.status(200).send(project)
     } catch (error) {
-        return next(new APIError(`${e.message}`, httpStatus.BAD_REQUEST, true));
+        return next(new APIError(e.message, httpStatus.BAD_REQUEST, true));
     }
 
 }
