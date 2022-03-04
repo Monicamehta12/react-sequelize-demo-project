@@ -68,7 +68,7 @@ const getProjectById = async (req, res, next) => {
         const project = await Project.findOne({ where: { id: id } });
         console.log('project', project)
         res.status(200).send(project)
-    } catch (error) {
+    } catch (e) {
         return next(new APIError(e.message, httpStatus.BAD_REQUEST, true));
     }
 
@@ -105,7 +105,7 @@ const searchByName = async (req, res, next) => {
         const project = await Project.findAll({ where: { projectName: { [Op.like]: `${search}%` } } })
         console.log("project", project)
         res.status(200).send(project)
-    } catch (error) {
+    } catch (e) {
         return next(new APIError(e.message, httpStatus.BAD_REQUEST, true));
     }
 
