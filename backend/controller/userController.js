@@ -1,5 +1,7 @@
 const { User, generatePassword } = require('../model/userModel')
 const Project = require('../model/projectModel')
+const schema = require("../helpers/joi.validation.helper")
+const Joi = require('joi')
 // const db = require('../model/index');
 const APIError = require('../helpers/APIError');
 const httpStatus = require('http-status');
@@ -19,7 +21,7 @@ const register = async (req, res, next) => {
         if (emailUser) {
             const message = 'You have already registered with this email';
             // res.status(200).json({error : {message}});
-            return next(new APIError(message, httpStatus.BAD_REQUEST));
+            return next(new APIError(message, httpStatus.BAD_REQUEST, true));
         }
         else {
             req.body.password = password;
@@ -43,7 +45,7 @@ const getUsers = async (req, res, next) => {
         const obj = resPattern.successPattern(httpStatus.OK, users, 'success')
         console.log("obj", obj);
         return res.status(obj.code).json(obj.data);
-    } catch (error) {
+    } catch (e) {
         return next(new APIError(e.message, httpStatus.BAD_REQUEST, true));
     }
 }
@@ -52,13 +54,13 @@ const getEmployees = async( req, res, next ) => {
     try {
         const employees = await User.findAll({
             where: { category: "employee"},
-            attributes: [['id','value'], 'name']
+            attributes: [['id','value'], 'firstName']
         })
         const obj = resPattern.successPattern(httpStatus.OK, employees , 'success')
         console.log("obj", obj);
         return res.status(obj.code).json(obj.data);
     }
-    catch (error) {
+    catch (e) {
         return next(new APIError(e.message, httpStatus.BAD_REQUEST, true));
     }
 }

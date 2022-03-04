@@ -15,18 +15,30 @@ const User = sequelize.define('user', {
         type: Sequelize.STRING,
         allowNull: false,
     },
-    name: {
+    username: {
         type: Sequelize.STRING,
-        allowNull: false
+        allowNull: false,
     },
     email: {
         type: Sequelize.STRING,
-        allowNull: false
+        allowNull: false,
     },
     password: {
         type: Sequelize.STRING,
-        allowNull: false
+        allowNull: false,
     },
+    confirmPassword: {
+        type: Sequelize.STRING,
+        allowNull: false,
+    },
+    firstName: {
+        type: Sequelize.STRING,
+        allowNull: false,
+    },
+    lastName: {
+        type: Sequelize.STRING,
+        allowNull: false,
+    }
 })
 
 const generateJwtToken = (user) => {
