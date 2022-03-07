@@ -38,7 +38,8 @@ const getAllTaskbyProject = async (req, res) => {
             }],
             
         });
-        res.status(200).send(taskDetail)
+        const obj = resPattern.successPattern(httpStatus.OK, taskDetail ,'success')
+        return res.status(obj.code).json(obj.data);
     } catch (e) {
         return next(new APIError(e.message, httpStatus.BAD_REQUEST, true));
     }

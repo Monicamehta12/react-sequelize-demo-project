@@ -1,11 +1,11 @@
 const Project = require('../model/projectModel')
 const { User } = require('../model/userModel')
-const sequelize = require('sequelize')
+const { sequelize, Op } = require('sequelize')
 // const db = require('../model/index');
 const APIError = require('../helpers/APIError');
 const httpStatus = require('http-status');
 const resPattern = require('../helpers/resPattern');
-const { Op } = require('sequelize');
+// const { Op } = require('sequelize');
 const TaskDetail = require('../model/taskModel');
 
 // const Project = db.projects;
@@ -67,7 +67,8 @@ const getProjectById = async (req, res, next) => {
         console.log("project-id", id)
         const project = await Project.findOne({ where: { id: id } });
         console.log('project', project)
-        res.status(200).send(project)
+        const obj = resPattern.successPattern(httpStatus.OK, project ,'success')
+        return res.status(obj.code).json(obj.data);
     } catch (e) {
         return next(new APIError(e.message, httpStatus.BAD_REQUEST, true));
     }

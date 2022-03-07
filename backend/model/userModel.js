@@ -1,4 +1,5 @@
 const { Sequelize, DataTypes } = require('sequelize')
+require('dotenv').config();
 const sequelize = require('../config/db')
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
@@ -46,7 +47,7 @@ const generateJwtToken = (user) => {
         id: user.id,
         email: user.email,
         category: user.category
-    }, 'secret');
+    }, process.env.TOKEN_SECRET);
 }
 
 const generatePassword = (password) => {

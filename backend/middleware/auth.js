@@ -1,4 +1,5 @@
 const APIError = require('../helpers/APIError');
+require('dotenv').config();
 const httpStatus = require('http-status');
 const resPattern = require('../helpers/resPattern');
 const { User } = require('../model/userModel');
@@ -27,7 +28,7 @@ const protect = async(req, res, next) => {
     }
 
     try {
-        const decoded = jwt.verify(token,'secret');
+        const decoded = jwt.verify(token, process.env.TOKEN_SECRET);
         console.log('----decoded----', decoded);
         const decodeId = {email : decoded.email}
         console.log("decodeId...",decodeId);
