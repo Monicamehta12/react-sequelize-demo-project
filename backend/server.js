@@ -1,19 +1,38 @@
 const express = require('express');
 const bodyParser = require('body-parser')
 const httpStatus = require('http-status');
-const expressValidation = require("express-validation");
+const expressValidation = require("express-validation")
+require('dotenv').config()
+const csrf = require('csurf')
+const cookieParser = require('cookie-parser')
+const helmet = require('helmet')
+const cors = require('cors');
+const { Sequelize, DataTypes } = require('sequelize')
 // const { validate, ValidationError, Joi } = require('express-validation')
 const APIError = require('./helpers/APIError')
+
+const csrfProtection = csrf({ cookie: true })
+
 const app = express();
-const { Sequelize, DataTypes } = require('sequelize')
+
+app.use(helmet())
+
 app.use(bodyParser.urlencoded({extended : true}));
 app.use(bodyParser.json());
-const cors = require('cors');
+
+app.use(cookieParser())
+
+app.disable('x-powered-by')
 
 // set cors...
+const PROTOCOL = process.env.PROTOCOL || 'http'
+const HOSTNAME = process.env.HOST || 'localhost'
+const CORS =
+  process.env.NODE_ENV === 'production' ? `${PROTOCOL}://${HOSTNAME}` : `*`
+
 app.use(cors());
 app.use(function (req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Origin", CORS);
   res.header(
     "Access-Control-Allow-Headers",
     "Origin, X-Requested-With, Content-Type, Accept"
@@ -29,9 +48,15 @@ app.use('/api/', router);
 const PORT = process.env.PORT || 8080;
 
 //testing api
-app.get('/', (req, res) => {
-    res.json({ message: 'Hello from Api'})
+app.get('/', csrfProtection, (req, res) => {
+  // pass the csrfToken to the view
+  res.json({ csrfToken: req.csrfToken() })
+  // res.render('send', { csrfToken: req.csrfToken() })
 })
+
+// app.get('/', (req, res) => {
+//     res.json({ message: 'Hello from Api'})
+// })
 
 // validate errors
 app.use((err, req, res, next) => {

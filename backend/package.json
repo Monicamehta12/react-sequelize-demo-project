@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "start": "nodemon server.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "snyk test"
   },
   "keywords": [
     "node",
@@ -19,10 +19,13 @@
     "axios": "^0.25.0",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.1",
+    "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
+    "csurf": "^1.11.0",
     "dotenv": "^16.0.0",
     "express": "^4.17.2",
     "express-validation": "^3.0.8",
+    "helmet": "^5.0.2",
     "http-status": "^1.5.0",
     "joi": "^17.6.0",
     "jsonwebtoken": "^8.5.1",
@@ -33,5 +36,8 @@
     "nodemon": "^2.0.15",
     "sequelize": "^6.16.2",
     "uuid": "^8.3.2"
+  },
+  "devDependencies": {
+    "snyk": "^1.863.0"
   }
 }
